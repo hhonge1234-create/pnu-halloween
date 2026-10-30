@@ -1,0 +1,5 @@
+-- Supabase에 적용된 스키마 (migrations: growth_tracking, orders_order_code)
+-- 대시보드 키는 여기 없어요. 아래처럼 직접 넣어요:
+--   insert into private.settings (key, value) values ('dashboard_key', '<키>')
+--   on conflict (key) do update set value = excluded.value;
+-- 전체 SQL은 Supabase 대시보드 → Database → Migrations 에서 볼 수 있어요.

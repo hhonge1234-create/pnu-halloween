@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>그로스 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --surface-0: #f3f2ef;
+    --surface-1: #fcfcfb;
+    --border: #e2e0da;
+    --grid: #ecebe7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #77756f;
+    --series-1: #eb6834;
+    --track: #f0eee9;
+    --critical: #c4312f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-0: #111110;
+      --surface-1: #1a1a19;
+      --border: #2e2d2b;
+      --grid: #262624;
+      --text-primary: #f0efec;
+      --text-secondary: #c3c2b7;
+      --text-muted: #9a988f;
+      --series-1: #d95926;
+      --track: #242422;
+      --critical: #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-0: #111110;
+    --surface-1: #1a1a19;
+    --border: #2e2d2b;
+    --grid: #262624;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted: #9a988f;
+    --series-1: #d95926;
+    --track: #242422;
+    --critical: #e66767;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--surface-0); color: var(--text-primary);
+    font-family: "Noto Sans KR", system-ui, sans-serif; font-size: 14px; line-height: 1.5;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+  h1 { font-size: 22px; margin: 0; }
+  .updated { color: var(--text-muted); font-size: 13px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface-1); }
+  .seg button { border: 0; background: none; padding: 7px 12px; font: inherit; color: var(--text-secondary); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--text-primary); color: var(--surface-1); }
+  .btn { border: 1px solid var(--border); background: var(--surface-1); color: var(--text-primary); padding: 7px 12px; border-radius: 8px; font: inherit; cursor: pointer; }
+  .btn:hover { border-color: var(--text-muted); }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .tile .label { color: var(--text-secondary); font-size: 13px; }
+  .tile .value { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 4px; }
+  .tile .note { color: var(--text-muted); font-size: 12px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 18px; min-width: 0; }
+  .card.full { grid-column: 1 / -1; }
+  .card h2 { font-size: 16px; margin: 0 0 2px; }
+  .card .desc { color: var(--text-muted); font-size: 13px; margin: 0 0 16px; }
+
+  /* 가로 막대 */
+  .bars { display: grid; gap: 10px; }
+  .bar-row { display: grid; grid-template-columns: 120px 1fr 64px; gap: 10px; align-items: center; padding: 2px 0; cursor: default; }
+  .bar-row .name { color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { height: 22px; background: var(--track); border-radius: 0 4px 4px 0; position: relative; }
+  .bar-fill { height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; min-width: 2px; transition: width .3s ease; }
+  .bar-row .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .bar-row:hover .bar-fill { filter: brightness(1.08); }
+  .bar-row:hover .name { color: var(--text-primary); }
+
+  /* 퍼널 */
+  .funnel-row { display: grid; grid-template-columns: 130px 1fr 150px; gap: 12px; align-items: center; padding: 4px 0; }
+  .funnel-row .name { font-weight: 500; }
+  .funnel-row .stats { text-align: right; font-variant-numeric: tabular-nums; }
+  .funnel-row .stats b { font-size: 16px; }
+  .funnel-row .stats span { color: var(--text-muted); font-size: 12px; display: block; }
+  .drop { display: grid; grid-template-columns: 130px 1fr 150px; gap: 12px; color: var(--critical); font-size: 12px; padding: 0 0 2px; }
+  .drop span:nth-child(2) { padding-left: 4px; }
+  @media (max-width: 560px) {
+    .funnel-row, .drop { grid-template-columns: 92px 1fr 104px; gap: 8px; }
+    .bar-row { grid-template-columns: 96px 1fr 48px; }
+  }
+
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--grid); }
+  th { color: var(--text-muted); font-weight: 500; font-size: 12px; }
+  td.r, th.r { text-align: right; }
+  .empty { color: var(--text-muted); padding: 12px 0; }
+
+  .tooltip {
+    position: fixed; pointer-events: none; z-index: 30; display: none;
+    background: var(--text-primary); color: var(--surface-1);
+    padding: 8px 10px; border-radius: 8px; font-size: 12px; line-height: 1.5; max-width: 240px;
+  }
+
+  /* 로그인 */
+  .gate { max-width: 360px; margin: 12vh auto; background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .gate h1 { margin-bottom: 8px; }
+  .gate p { color: var(--text-secondary); margin: 0 0 16px; }
+  .gate input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-0); color: var(--text-primary); font: inherit; margin-bottom: 10px; }
+  .gate .btn { width: 100%; background: var(--text-primary); color: var(--surface-1); border: 0; padding: 10px; }
+  .gate .err { color: var(--critical); min-height: 20px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate" hidden>
+  <h1>그로스 대시보드</h1>
+  <p>대시보드 키를 입력하세요.</p>
+  <form id="gate-form">
+    <input id="key" type="password" autocomplete="current-password" placeholder="대시보드 키" required>
+    <div class="err" id="gate-err"></div>
+    <button class="btn" type="submit">들어가기</button>
+  </form>
+</div>
+
+<div id="app" class="wrap" hidden>
+  <header>
+    <div>
+      <h1>🎃 PNU 할로윈 그로스 대시보드</h1>
+      <div class="updated" id="updated">불러오는 중…</div>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="기간">
+        <button data-range="all" aria-pressed="true">전체</button>
+        <button data-range="24h" aria-pressed="false">24시간</button>
+        <button data-range="1h" aria-pressed="false">1시간</button>
+      </div>
+      <button class="btn" id="refresh">새로고침</button>
+      <button class="btn" id="logout">나가기</button>
+    </div>
+  </header>
+
+  <div class="tiles">
+    <div class="tile"><div class="label">방문 세션</div><div class="value" id="t-visitors">–</div><div class="note">페이지에 들어온 세션 수</div></div>
+    <div class="tile"><div class="label">구매 전환율</div><div class="value" id="t-cvr">–</div><div class="note">구매 완료 ÷ 방문</div></div>
+    <div class="tile"><div class="label">구매 완료 세션</div><div class="value" id="t-buyers">–</div><div class="note" id="t-orders">주문 –건</div></div>
+    <div class="tile"><div class="label">예매 금액</div><div class="value" id="t-revenue">–</div><div class="note" id="t-qty">수량 –개</div></div>
+  </div>
+
+  <div class="grid">
+    <section class="card full">
+      <h2>퍼널별 이탈율</h2>
+      <p class="desc">각 단계에 도달한 세션 수예요. 빨간 글씨는 바로 앞 단계에서 빠져나간 비율이에요.</p>
+      <div id="funnel"></div>
+    </section>
+
+    <section class="card">
+      <h2>버튼별 클릭 수</h2>
+      <p class="desc">전체 클릭 수 기준이에요. 막대에 마우스를 올리면 클릭한 세션 수도 보여요.</p>
+      <div class="bars" id="clicks"></div>
+    </section>
+
+    <section class="card">
+      <h2>상품별 예매</h2>
+      <p class="desc">어떤 상품이 많이 팔렸는지 보여줘요.</p>
+      <table>
+        <thead><tr><th>상품</th><th class="r">주문</th><th class="r">수량</th><th class="r">금액</th></tr></thead>
+        <tbody id="items"></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>유입 경로별 전환</h2>
+      <p class="desc">링크의 <code>utm_source</code> 값 기준이에요. 값이 없으면 direct로 잡혀요.</p>
+      <table>
+        <thead><tr><th>유입 경로</th><th class="r">방문</th><th class="r">구매</th><th class="r">전환율</th></tr></thead>
+        <tbody id="sources"></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>기기별 전환</h2>
+      <p class="desc">화면 너비로 기기를 구분해요.</p>
+      <table>
+        <thead><tr><th>기기</th><th class="r">방문</th><th class="r">구매</th><th class="r">전환율</th></tr></thead>
+        <tbody id="devices"></tbody>
+      </table>
+    </section>
+  </div>
+</div>
+
+<div class="tooltip" id="tip"></div>
+
+<script src="js/config.js"></script>
+<script>
+(function () {
+  const { SUPABASE_URL, SUPABASE_KEY, ITEMS } = window.APP_CONFIG;
+  const $ = (id) => document.getElementById(id);
+
+  const STEP_LABELS = {
+    landing: "방문",
+    view_program: "프로그램 확인",
+    view_tickets: "티켓 영역 도달",
+    select_ticket: "티켓 선택",
+    checkout_start: "구매 진행",
+    purchase: "구매 완료",
+  };
+  const BUTTON_LABELS = {
+    hero_buy: "히어로 · 티켓 예매",
+    hero_program: "히어로 · 프로그램 보기",
+    program_buy: "프로그램 · 티켓 보기",
+    sticky_buy: "하단 고정 · 예매",
+    nav_logo: "상단 · 로고",
+    nav_program: "상단 · 프로그램",
+    nav_tickets: "상단 · 티켓",
+    nav_faq: "상단 · FAQ",
+    ticket_party: "티켓 · 파티 입장권",
+    ticket_goods: "티켓 · 굿즈 세트",
+    ticket_photo: "티켓 · 포토부스",
+    qty_plus: "수량 +",
+    qty_minus: "수량 −",
+    checkout_next: "구매 · 다음",
+    checkout_agree: "구매 · 동의 체크",
+    checkout_back: "구매 · 이전",
+    checkout_confirm: "구매 · 예매 확정",
+    checkout_close: "구매 · 닫기",
+    checkout_done: "구매 · 완료 확인",
+    faq_costume: "FAQ · 코스튬",
+    faq_pay: "FAQ · 결제",
+    faq_outsider: "FAQ · 타 학교",
+    faq_rain: "FAQ · 우천",
+    footer_share: "하단 · 공유",
+    footer_instagram: "하단 · 인스타그램",
+  };
+  const DEVICE_LABELS = { mobile: "모바일", tablet: "태블릿", desktop: "데스크톱", unknown: "알 수 없음" };
+
+  const fmt = (n) => Number(n || 0).toLocaleString("ko-KR");
+  const pct = (a, b) => (b > 0 ? (a / b) * 100 : 0);
+  const pctStr = (a, b) => (b > 0 ? pct(a, b).toFixed(1) + "%" : "–");
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  // 키 저장 (브라우저에만)
+  function getKey() { try { return localStorage.getItem("hw_dash_key"); } catch (e) { return null; } }
+  function setKey(k) { try { k ? localStorage.setItem("hw_dash_key", k) : localStorage.removeItem("hw_dash_key"); } catch (e) {} }
+  let key = getKey();
+  let range = "all";
+  let timer = null;
+
+  async function fetchReport(k) {
+    const since = range === "24h" ? new Date(Date.now() - 864e5).toISOString()
+                : range === "1h" ? new Date(Date.now() - 36e5).toISOString() : null;
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/analytics_report`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ p_key: k, p_since: since }),
+    });
+    if (r.status === 401 || r.status === 403) throw new Error("bad_key");
+    if (!r.ok) {
+      const t = await r.text();
+      if (t.includes("invalid dashboard key")) throw new Error("bad_key");
+      throw new Error("http_" + r.status);
+    }
+    return r.json();
+  }
+
+  // 툴팁
+  const tip = $("tip");
+  function bindTip(el, html) {
+    el.addEventListener("mousemove", (e) => {
+      tip.innerHTML = html; tip.style.display = "block";
+      const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8);
+      tip.style.left = x + "px"; tip.style.top = (e.clientY + 14) + "px";
+    });
+    el.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+  }
+
+  function renderFunnel(funnel) {
+    const box = $("funnel"); box.innerHTML = "";
+    const top = funnel[0]?.sessions || 0;
+    funnel.forEach((f, i) => {
+      if (i > 0) {
+        const prev = funnel[i - 1].sessions;
+        const lost = prev - f.sessions;
+        const d = document.createElement("div");
+        d.className = "drop";
+        d.innerHTML = `<span></span><span>↓ 이탈 ${prev > 0 ? pct(lost, prev).toFixed(1) + "%" : "–"} (${fmt(lost)}명)</span><span></span>`;
+        box.appendChild(d);
+      }
+      const row = document.createElement("div");
+      row.className = "funnel-row";
+      const w = top > 0 ? pct(f.sessions, top) : 0;
+      row.innerHTML = `
+        <div class="name">${i + 1}. ${STEP_LABELS[f.step] || esc(f.step)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div>
+        <div class="stats"><b>${fmt(f.sessions)}</b> 세션<span>방문 대비 ${pctStr(f.sessions, top)}</span></div>`;
+      bindTip(row, `<b>${STEP_LABELS[f.step]}</b><br>${fmt(f.sessions)} 세션 · 방문 대비 ${pctStr(f.sessions, top)}` +
+        (i > 0 ? `<br>앞 단계 대비 ${pctStr(f.sessions, funnel[i - 1].sessions)} 통과` : ""));
+      box.appendChild(row);
+    });
+  }
+
+  function renderClicks(clicks) {
+    const box = $("clicks"); box.innerHTML = "";
+    if (!clicks.length) { box.innerHTML = `<div class="empty">아직 클릭 데이터가 없어요.</div>`; return; }
+    const max = Math.max(...clicks.map((c) => c.clicks));
+    clicks.forEach((c) => {
+      const label = BUTTON_LABELS[c.button_id] || c.button_id;
+      const row = document.createElement("div");
+      row.className = "bar-row";
+      row.innerHTML = `
+        <div class="name" title="${esc(label)}">${esc(label)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct(c.clicks, max)}%"></div></div>
+        <div class="num">${fmt(c.clicks)}</div>`;
+      bindTip(row, `<b>${esc(label)}</b><br>클릭 ${fmt(c.clicks)}회 · ${fmt(c.sessions)} 세션<br><span style="opacity:.7">${esc(c.button_id)}</span>`);
+      box.appendChild(row);
+    });
+  }
+
+  function renderConvTable(id, rows, labelFn) {
+    const tb = $(id);
+    if (!rows.length) { tb.innerHTML = `<tr><td colspan="4" class="empty">아직 데이터가 없어요.</td></tr>`; return; }
+    tb.innerHTML = rows.map((r) => `
+      <tr><td>${esc(labelFn(r))}</td><td class="r">${fmt(r.visitors)}</td>
+      <td class="r">${fmt(r.purchases)}</td><td class="r">${pctStr(r.purchases, r.visitors)}</td></tr>`).join("");
+  }
+
+  function render(d) {
+    const visitors = d.funnel[0]?.sessions || 0;
+    const buyers = d.funnel[d.funnel.length - 1]?.sessions || 0;
+    $("t-visitors").textContent = fmt(visitors);
+    $("t-buyers").textContent = fmt(buyers);
+    $("t-cvr").textContent = pctStr(buyers, visitors);
+    $("t-revenue").textContent = fmt(d.orders.revenue) + "원";
+    $("t-orders").textContent = `주문 ${fmt(d.orders.count)}건`;
+    $("t-qty").textContent = `수량 ${fmt(d.orders.quantity)}개`;
+
+    renderFunnel(d.funnel);
+    renderClicks(d.clicks);
+    renderConvTable("sources", d.sources, (r) => r.source);
+    renderConvTable("devices", d.devices, (r) => DEVICE_LABELS[r.device] || r.device);
+
+    const tb = $("items");
+    tb.innerHTML = d.items.length ? d.items.map((r) => `
+      <tr><td>${esc(ITEMS[r.item]?.name || r.item)}</td><td class="r">${fmt(r.orders)}</td>
+      <td class="r">${fmt(r.quantity)}</td><td class="r">${fmt(r.revenue)}원</td></tr>`).join("")
+      : `<tr><td colspan="4" class="empty">아직 예매가 없어요.</td></tr>`;
+
+    $("updated").textContent = "마지막 업데이트 " + new Date(d.generated_at).toLocaleTimeString("ko-KR") + " · 30초마다 자동 새로고침";
+  }
+
+  async function load() {
+    try {
+      render(await fetchReport(key));
+    } catch (e) {
+      if (e.message === "bad_key") return logout("키가 맞지 않아요.");
+      $("updated").textContent = "불러오지 못했어요. 잠시 후 다시 시도해요.";
+    }
+  }
+
+  function showApp() {
+    $("gate").hidden = true; $("app").hidden = false;
+    load();
+    clearInterval(timer);
+    timer = setInterval(load, 30000);
+  }
+  function logout(msg) {
+    clearInterval(timer); setKey(null); key = null;
+    $("app").hidden = true; $("gate").hidden = false;
+    $("gate-err").textContent = msg || "";
+  }
+
+  $("gate-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const k = $("key").value.trim();
+    $("gate-err").textContent = "";
+    try {
+      await fetchReport(k);
+      key = k; setKey(k); showApp();
+    } catch (err) {
+      $("gate-err").textContent = err.message === "bad_key" ? "키가 맞지 않아요." : "연결에 실패했어요.";
+    }
+  });
+
+  document.querySelectorAll("[data-range]").forEach((b) => b.addEventListener("click", () => {
+    range = b.dataset.range;
+    document.querySelectorAll("[data-range]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    load();
+  }));
+  $("refresh").onclick = load;
+  $("logout").onclick = () => logout();
+
+  if (key) showApp(); else $("gate").hidden = false;
+})();
+</script>
+</body>
+</html>

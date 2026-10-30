@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PNU 할로윈 나이트 2026</title>
+<meta name="description" content="부산대학교 학생회 할로윈 이벤트 — 10월 31일 넉넉한터에서 만나요.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #120d18;
+    --bg-2: #1c1424;
+    --card: #241a2e;
+    --line: #3a2d47;
+    --text: #f4eee6;
+    --muted: #b9adc4;
+    --orange: #ff7a1a;
+    --orange-2: #ff9a4d;
+    --purple: #9b6bff;
+    --green: #7ee08a;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans KR", system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+  .display { font-family: "Black Han Sans", "Noto Sans KR", sans-serif; font-weight: 400; letter-spacing: 0.01em; }
+
+  /* 상단 바 */
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .nav .logo { font-size: 18px; text-decoration: none; }
+  .nav .logo span { color: var(--orange); }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links a {
+    text-decoration: none; color: var(--muted); font-size: 14px;
+    padding: 8px 10px; border-radius: 8px;
+  }
+  .nav-links a:hover { color: var(--text); background: var(--card); }
+
+  /* 히어로 */
+  .hero {
+    position: relative; overflow: hidden;
+    padding: 72px 0 88px;
+    background:
+      radial-gradient(600px 300px at 80% 0%, rgba(155,107,255,.25), transparent 70%),
+      radial-gradient(500px 300px at 10% 100%, rgba(255,122,26,.18), transparent 70%);
+  }
+  .moon {
+    position: absolute; right: -60px; top: 40px; width: 260px; height: 260px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff4d6, #f3c97a 60%, #c98d3a);
+    box-shadow: 0 0 120px rgba(243,201,122,.35);
+    opacity: .85;
+  }
+  .badge {
+    display: inline-block; font-size: 13px; font-weight: 700;
+    color: var(--orange-2); border: 1px solid rgba(255,122,26,.4);
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 18px;
+  }
+  .hero h1 { font-size: clamp(44px, 9vw, 92px); line-height: 1.02; margin: 0 0 18px; position: relative; }
+  .hero h1 em { font-style: normal; color: var(--orange); }
+  .hero p.lead { font-size: clamp(16px, 2.4vw, 20px); color: var(--muted); max-width: 560px; margin: 0 0 28px; position: relative; }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; position: relative; }
+  .meta div {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px 14px; font-size: 14px;
+  }
+  .meta b { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; position: relative; }
+
+  .btn {
+    appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 22px; border-radius: 12px; text-decoration: none; font-size: 16px;
+    transition: transform .12s ease, background .12s ease;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn-primary { background: var(--orange); color: #1a0f05; }
+  .btn-primary:hover { background: var(--orange-2); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--card); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* 카운트다운 */
+  .countdown { display: flex; gap: 8px; margin-top: 28px; position: relative; }
+  .countdown div { background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; text-align: center; min-width: 64px; }
+  .countdown span { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+  .countdown small { font-size: 11px; color: var(--muted); }
+
+  section.block { padding: 72px 0; border-top: 1px solid var(--line); }
+  section.block h2 { font-size: clamp(30px, 5vw, 44px); margin: 0 0 8px; }
+  section.block p.sub { color: var(--muted); margin: 0 0 32px; }
+
+  /* 프로그램 */
+  .timeline { display: grid; gap: 12px; }
+  .tl-item {
+    display: grid; grid-template-columns: 84px 1fr; gap: 16px; align-items: start;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px;
+  }
+  .tl-time { font-size: 22px; color: var(--orange); }
+  .tl-item h3 { margin: 0 0 4px; font-size: 18px; }
+  .tl-item p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* 티켓 */
+  .tickets { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .ticket {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; display: flex; flex-direction: column; gap: 10px; position: relative;
+  }
+  .ticket.best { border-color: var(--orange); }
+  .ticket .tag {
+    position: absolute; top: -11px; left: 18px; background: var(--orange); color: #1a0f05;
+    font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 999px;
+  }
+  .ticket .emoji { font-size: 36px; line-height: 1; }
+  .ticket h3 { margin: 0; font-size: 20px; }
+  .ticket .price { font-size: 28px; }
+  .ticket ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; flex: 1; }
+  .stock { font-size: 13px; color: var(--orange-2); }
+
+  /* FAQ */
+  details {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 18px; margin-bottom: 10px;
+  }
+  summary { cursor: pointer; font-weight: 700; }
+  details p { color: var(--muted); margin: 10px 0 0; }
+
+  footer { border-top: 1px solid var(--line); padding: 40px 0 120px; color: var(--muted); font-size: 14px; }
+  footer .row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+
+  /* 모바일 하단 고정 CTA */
+  .sticky-cta {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    border-top: 1px solid var(--line); backdrop-filter: blur(10px);
+    display: none;
+  }
+  .sticky-cta .btn { width: 100%; }
+  @media (max-width: 720px) {
+    .sticky-cta { display: block; }
+    .nav-links { display: none; }
+    .moon { width: 160px; height: 160px; right: -50px; top: 20px; }
+    .tl-item { grid-template-columns: 1fr; gap: 4px; }
+  }
+
+  /* 구매 모달 */
+  .modal {
+    position: fixed; inset: 0; z-index: 50; display: none;
+    background: rgba(5, 2, 8, .7); backdrop-filter: blur(4px);
+    align-items: flex-end; justify-content: center;
+  }
+  .modal.open { display: flex; }
+  .sheet {
+    width: 100%; max-width: 460px; background: var(--bg-2); border: 1px solid var(--line);
+    border-radius: 20px 20px 0 0; padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+    max-height: 92vh; overflow-y: auto;
+  }
+  @media (min-width: 721px) {
+    .modal { align-items: center; }
+    .sheet { border-radius: 20px; }
+  }
+  .sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .sheet-head h3 { margin: 0; font-size: 20px; }
+  .x { background: none; border: 0; color: var(--muted); font-size: 26px; cursor: pointer; line-height: 1; padding: 4px 8px; }
+  .steps { display: flex; gap: 6px; margin-bottom: 18px; }
+  .steps i { flex: 1; height: 4px; border-radius: 4px; background: var(--line); }
+  .steps i.on { background: var(--orange); }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .qty { display: flex; align-items: center; gap: 10px; }
+  .qty button {
+    width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); color: var(--text); font-size: 20px; cursor: pointer;
+  }
+  .qty output { min-width: 40px; text-align: center; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .summary {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 14px 0; border-top: 1px dashed var(--line); margin: 6px 0 18px;
+  }
+  .summary b { font-size: 24px; color: var(--orange); }
+  .info { background: var(--card); border-radius: 12px; padding: 14px; font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+  .check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; margin-bottom: 18px; cursor: pointer; }
+  .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--orange); }
+  .done { text-align: center; }
+  .done .code {
+    font-size: 40px; letter-spacing: .12em; color: var(--green);
+    background: var(--card); border-radius: 12px; padding: 14px; margin: 12px 0;
+  }
+  .err { color: #ff8a8a; font-size: 14px; min-height: 20px; margin: -8px 0 10px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%);
+    background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 10px;
+    font-size: 14px; font-weight: 700; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 60;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="#top" class="logo display" data-track="nav_logo">PNU <span>HALLOWEEN</span></a>
+    <div class="nav-links">
+      <a href="#program" data-track="nav_program">프로그램</a>
+      <a href="#tickets" data-track="nav_tickets">티켓</a>
+      <a href="#faq" data-track="nav_faq">FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="moon" aria-hidden="true"></div>
+  <div class="wrap">
+    <span class="badge">🎃 부산대학교 학생회 주최</span>
+    <h1 class="display">PNU<br><em>할로윈</em> 나이트</h1>
+    <p class="lead">코스튬 입고 넉넉한터로! 포토존, 호박 등불 만들기, 코스튬 콘테스트와 경품 추첨까지. 1년에 한 번뿐인 밤을 같이 보내요.</p>
+    <div class="meta">
+      <div><b>날짜</b>2026.10.31 (토)</div>
+      <div><b>시간</b>17:00 – 21:00</div>
+      <div><b>장소</b>부산대 넉넉한터</div>
+    </div>
+    <div class="cta-row">
+      <a href="#tickets" class="btn btn-primary" data-track="hero_buy">티켓 예매하기 →</a>
+      <a href="#program" class="btn btn-ghost" data-track="hero_program">프로그램 보기</a>
+    </div>
+    <div class="countdown" id="countdown" aria-label="이벤트까지 남은 시간">
+      <div><span id="cd-d">0</span><small>일</small></div>
+      <div><span id="cd-h">0</span><small>시간</small></div>
+      <div><span id="cd-m">0</span><small>분</small></div>
+      <div><span id="cd-s">0</span><small>초</small></div>
+    </div>
+  </div>
+</header>
+
+<section class="block" id="program" data-step="view_program">
+  <div class="wrap">
+    <h2 class="display">프로그램</h2>
+    <p class="sub">17시부터 21시까지, 시간대별로 즐길 거리가 준비돼 있어요.</p>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-time display">17:00</div><div><h3>👻 입장 & 유령 포토존</h3><p>코스튬 체크인 후 포토존 오픈. 코스튬 착용 시 사탕 꾸러미 증정.</p></div></div>
+      <div class="tl-item"><div class="tl-time display">18:00</div><div><h3>🎃 호박 등불 만들기</h3><p>선착순 100명, 미니 호박에 직접 조각하고 LED 초를 넣어 가져가세요.</p></div></div>
+      <div class="tl-item"><div class="tl-time display">19:00</div><div><h3>🧛 코스튬 콘테스트</h3><p>현장 투표로 베스트 코스튬 3팀을 뽑아 상품을 드려요.</p></div></div>
+      <div class="tl-item"><div class="tl-time display">20:00</div><div><h3>🦇 할로윈 파티 & 경품 추첨</h3><p>DJ 파티와 함께 입장권 번호로 경품 추첨을 진행해요.</p></div></div>
+    </div>
+    <div class="cta-row" style="margin-top:24px">
+      <a href="#tickets" class="btn btn-primary" data-track="program_buy">티켓 보러 가기 →</a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="tickets" data-step="view_tickets">
+  <div class="wrap">
+    <h2 class="display">티켓 예매</h2>
+    <p class="sub">미리 예매하고 현장에서 주문번호를 보여주세요. 결제는 현장에서 해요.</p>
+    <div class="tickets">
+      <div class="ticket best">
+        <span class="tag">BEST</span>
+        <div class="emoji">🎟️</div>
+        <h3>할로윈 파티 입장권</h3>
+        <div class="price display">3,000원</div>
+        <ul><li>전 프로그램 참여</li><li>경품 추첨 응모권</li><li>사탕 꾸러미</li></ul>
+        <div class="stock">🔥 선착순 300매</div>
+        <button class="btn btn-primary" data-track="ticket_party" data-item="party">선택하기</button>
+      </div>
+      <div class="ticket">
+        <div class="emoji">🎃</div>
+        <h3>호박 굿즈 세트</h3>
+        <div class="price display">5,000원</div>
+        <ul><li>호박 등불 만들기 키트</li><li>PNU 할로윈 스티커</li><li>한정 키링</li></ul>
+        <div class="stock">선착순 100세트</div>
+        <button class="btn btn-ghost" data-track="ticket_goods" data-item="goods">선택하기</button>
+      </div>
+      <div class="ticket">
+        <div class="emoji">📸</div>
+        <h3>유령 포토부스</h3>
+        <div class="price display">2,000원</div>
+        <ul><li>할로윈 프레임 4컷</li><li>소품 무료 대여</li><li>QR 원본 다운로드</li></ul>
+        <div class="stock">현장 대기 없이 바로</div>
+        <button class="btn btn-ghost" data-track="ticket_photo" data-item="photo">선택하기</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="faq">
+  <div class="wrap">
+    <h2 class="display">FAQ</h2>
+    <p class="sub">궁금한 점을 모았어요.</p>
+    <details data-track="faq_costume"><summary>코스튬 꼭 입어야 하나요?</summary><p>아니요! 다만 코스튬을 입으면 사탕 꾸러미와 콘테스트 참가 자격을 드려요.</p></details>
+    <details data-track="faq_pay"><summary>결제는 어떻게 하나요?</summary><p>예매 후 받은 주문번호를 현장 부스에 보여주고 카드나 현금으로 결제하면 돼요.</p></details>
+    <details data-track="faq_outsider"><summary>타 학교 학생도 참여할 수 있나요?</summary><p>네, 누구나 참여할 수 있어요. 경품 추첨은 부산대 재학생만 해당돼요.</p></details>
+    <details data-track="faq_rain"><summary>비가 오면요?</summary><p>우천 시 학생회관 1층으로 장소를 옮겨요. 인스타그램으로 공지할게요.</p></details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <button class="btn btn-ghost" id="share" data-track="footer_share">🔗 친구에게 공유하기</button>
+      <a class="btn btn-ghost" href="https://www.instagram.com/" target="_blank" rel="noopener" data-track="footer_instagram">📷 인스타그램</a>
+    </div>
+    <p>주최 부산대학교 학생회 · 문의는 학생회 인스타그램 DM</p>
+  </div>
+</footer>
+
+<div class="sticky-cta">
+  <a href="#tickets" class="btn btn-primary" data-track="sticky_buy">🎃 티켓 예매하기</a>
+</div>
+
+<!-- 구매 모달 -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 id="sheet-title">티켓 예매</h3>
+      <button class="x" id="close" aria-label="닫기" data-track="checkout_close">×</button>
+    </div>
+    <div class="steps"><i id="s1" class="on"></i><i id="s2"></i><i id="s3"></i></div>
+
+    <!-- 1단계: 수량 -->
+    <div id="pane-1">
+      <div class="field">
+        <label>상품</label>
+        <div id="item-name" style="font-weight:700;font-size:18px"></div>
+      </div>
+      <div class="field">
+        <label>수량 (최대 10)</label>
+        <div class="qty">
+          <button id="minus" aria-label="수량 줄이기" data-track="qty_minus">−</button>
+          <output id="qty">1</output>
+          <button id="plus" aria-label="수량 늘리기" data-track="qty_plus">+</button>
+        </div>
+      </div>
+      <div class="summary"><span>총 금액</span><b id="total">0원</b></div>
+      <button class="btn btn-primary" style="width:100%" id="next" data-track="checkout_next">다음</button>
+    </div>
+
+    <!-- 2단계: 확인 -->
+    <div id="pane-2" hidden>
+      <div class="info">
+        <div><b style="color:var(--text)" id="confirm-line"></b></div>
+        결제는 10월 31일 현장 부스에서 해요. 예매를 마치면 6자리 주문번호가 나와요. 현장에서 이 번호를 보여주세요.
+      </div>
+      <label class="check"><input type="checkbox" id="agree" data-track="checkout_agree"> 현장에서 결제하고 수령하는 것에 동의해요.</label>
+      <div class="err" id="err"></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" id="back" data-track="checkout_back">이전</button>
+        <button class="btn btn-primary" style="flex:1" id="confirm" data-track="checkout_confirm" disabled>예매 확정</button>
+      </div>
+    </div>
+
+    <!-- 3단계: 완료 -->
+    <div id="pane-3" hidden class="done">
+      <div style="font-size:48px">🎉</div>
+      <h3 style="margin:6px 0 0">예매 완료!</h3>
+      <div class="code display" id="code"></div>
+      <p style="color:var(--muted);margin:0 0 18px">이 화면을 캡처해 두고, 현장 부스에서 주문번호를 보여주세요.</p>
+      <button class="btn btn-ghost" style="width:100%" id="done" data-track="checkout_done">확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script>
+(function () {
+  const ITEMS = window.APP_CONFIG.ITEMS;
+  const $ = (id) => document.getElementById(id);
+  const won = (n) => n.toLocaleString("ko-KR") + "원";
+
+  // 카운트다운 (10/31 17:00 KST)
+  const target = new Date("2026-10-31T17:00:00+09:00").getTime();
+  function tick() {
+    let diff = Math.max(0, target - Date.now());
+    const d = Math.floor(diff / 864e5); diff -= d * 864e5;
+    const h = Math.floor(diff / 36e5); diff -= h * 36e5;
+    const m = Math.floor(diff / 6e4); diff -= m * 6e4;
+    const s = Math.floor(diff / 1e3);
+    $("cd-d").textContent = d; $("cd-h").textContent = h;
+    $("cd-m").textContent = m; $("cd-s").textContent = s;
+  }
+  tick(); setInterval(tick, 1000);
+
+  // 구매 흐름
+  const modal = $("modal");
+  let item = null, qty = 1, busy = false;
+
+  function showPane(n) {
+    [1, 2, 3].forEach((i) => {
+      $("pane-" + i).hidden = i !== n;
+      $("s" + i).classList.toggle("on", i <= n);
+    });
+  }
+  function render() {
+    $("item-name").textContent = ITEMS[item].name;
+    $("qty").textContent = qty;
+    $("total").textContent = won(ITEMS[item].price * qty);
+    $("minus").disabled = qty <= 1;
+    $("plus").disabled = qty >= 10;
+  }
+  function open(it) {
+    item = it; qty = 1;
+    $("agree").checked = false; $("confirm").disabled = true; $("err").textContent = "";
+    render(); showPane(1);
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+    Track.step("select_ticket");
+  }
+  function close() {
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  document.querySelectorAll("[data-item]").forEach((b) =>
+    b.addEventListener("click", () => open(b.dataset.item)));
+  $("minus").onclick = () => { qty = Math.max(1, qty - 1); render(); };
+  $("plus").onclick = () => { qty = Math.min(10, qty + 1); render(); };
+  $("next").onclick = () => {
+    $("confirm-line").textContent = `${ITEMS[item].name} × ${qty} · ${won(ITEMS[item].price * qty)}`;
+    showPane(2);
+    Track.step("checkout_start");
+  };
+  $("back").onclick = () => showPane(1);
+  $("agree").onchange = (e) => { $("confirm").disabled = !e.target.checked; };
+  $("close").onclick = close;
+  $("done").onclick = close;
+  modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+
+  function makeCode() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const arr = new Uint32Array(6);
+    crypto.getRandomValues(arr);
+    return Array.from(arr, (n) => chars[n % chars.length]).join("");
+  }
+
+  $("confirm").onclick = async () => {
+    if (busy) return;
+    busy = true; $("confirm").disabled = true; $("err").textContent = "";
+    const code = makeCode();
+    try {
+      await Track.order(item, qty, code);
+      Track.step("purchase");
+      $("code").textContent = code;
+      showPane(3);
+    } catch (e) {
+      console.warn(e);
+      $("err").textContent = "예매 중 문제가 생겼어요. 잠시 후 다시 시도해 주세요.";
+      $("confirm").disabled = false;
+    } finally {
+      busy = false;
+    }
+  };
+
+  // 공유
+  function toast(msg) {
+    const t = $("toast"); t.textContent = msg; t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 1800);
+  }
+  $("share").onclick = async () => {
+    const url = location.origin + location.pathname + "?utm_source=share&utm_medium=friend";
+    try {
+      if (navigator.share) { await navigator.share({ title: document.title, url }); return; }
+      await navigator.clipboard.writeText(url);
+      toast("링크를 복사했어요!");
+    } catch (e) { /* 공유 취소 */ }
+  };
+})();
+</script>
+</body>
+</html>
